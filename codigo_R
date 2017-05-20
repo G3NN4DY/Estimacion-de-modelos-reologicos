@@ -1,0 +1,102 @@
+require(gamlss)
+
+lodo.OBM <- read.table(file.choose(), header=TRUE,sep='\t')
+lodo.BP <- read.table(file.choose(), header=TRUE,sep='\t')
+lodo.KP <- read.table(file.choose(), header=TRUE,sep='\t')
+lodo.SWP <- read.table(file.choose(), header=TRUE,sep='\t')
+
+N <- c(lodo.OBM$N) ## su puede usar una sola vez
+OBM <- c(lodo.OBM$OBM)
+BP <- c(lodo.BP$BP)
+KP <- c(lodo.KP$KP)
+SWP <- c(lodo.SWP$SWP)
+
+
+## sin transormación 
+windows()
+par(mfrow=c(2, 2))
+
+reg.OBM <- lm(OBM ~ N, data =lodo.OBM)
+summary(reg.OBM)
+plot(N,OBM,pch=19,col='green',xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Lodo base aceite')
+abline(reg.OBM)
+
+reg.BP <- lm(BP ~ N, data =lodo.BP)
+summary(reg.BP)
+plot(N,BP,pch=19,col='blue',xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Bentonita/Polímeros')
+abline(reg.BP)
+
+reg.KP <- lm(KP ~ N, data =lodo.KP)
+summary(reg.KP)
+plot(N,KP,pch=19,col='red',xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Cloruro de Potasio/Polímeros')
+abline(reg.KP)
+
+reg.SWP <- lm(SWP ~ N, data =lodo.SWP)
+summary(reg.SWP)
+plot(N,SWP,pch=19,xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Agua de mar/PAC')
+abline(reg.SWP)
+
+##modOBM <- fitDist(OBM, type = 'realplus', k = 1, data = lodo.OBM)
+##modl <- fitDist(y = BP, type = 'realplus', k = 1, data = lod)
+
+## se usa una transformación, y = Bo*x^(B1) a Ln(y) = Ln(Bo) + B1*Ln(X)
+
+LOG.N <- log(N)
+LOG.OBM <- log(OBM)
+LOG.BP <- log(BP)
+LOG.KP <- log(KP)
+LOG.SWP <- log(SWP)
+
+windows()
+par(mfrow=c(2, 2))
+
+reg.LOG.OBM <- lm(LOG.OBM ~ LOG.N)
+summary(reg.LOG.OBM)
+plot(LOG.N,LOG.OBM,pch=19,col='green', xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Lodo base aceite, log-log')
+abline(reg.LOG.OBM)
+
+reg.LOG.BP <- lm(LOG.BP ~ LOG.N)
+summary(reg.LOG.BP)
+plot(LOG.N,LOG.BP,pch=19,col='blue', xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Bentonita/Polímeros, log-log')
+abline(reg.LOG.BP)
+
+reg.LOG.KP <- lm(LOG.KP ~ LOG.N)
+summary(reg.LOG.KP)
+plot(LOG.N,LOG.KP,pch=19,col='red', xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Cloruro de Potasio/Polímeros, log-log')
+abline(reg.LOG.KP)
+
+reg.LOG.SWP <- lm(LOG.SWP ~ LOG.N)
+summary(reg.LOG.SWP)
+plot(LOG.N,LOG.SWP,pch=19, xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Agua de mar/PAC, log-log')
+abline(reg.LOG.SWP)
+
+## transformación con raíz
+
+Rz.BP <- sqrt(BP)
+Rz.SWP <- sqrt(BP)
+Rz.KP <- sqrt(BP)
+Rz.OBM <- sqrt(BP)
+Rz.N <- sqrt(N)
+
+windows()
+par(mfrow=c(2, 2))
+
+reg.Rz.OBM <- lm(Rz.OBM ~ Rz.N)
+summary(reg.Rz.OBM)
+plot(Rz.N,Rz.OBM,pch=19,col='green', xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Lodo base aceite,  raíz-raíz')
+abline(reg.Rz.OBM)
+
+reg.Rz.BP <- lm(Rz.BP ~ Rz.N)
+summary(reg.Rz.BP)
+plot(Rz.N,Rz.BP,pch=19,col='blue', xlab ='Velocidad de corte (RPM)' , ylab = 'Esfuerzo de corte (lbf/100ft2)', main = 'Bentonita/Polímeros, raíz-raíz')
+abline(reg.Rz.BP)
+
+reg.Rz.KP <- lm(Rz.KP ~ Rz.N)
+summary(reg.Rz.KP)
+plot(Rz.N,Rz.KP,pch=19,col='red',xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Cloruro de Potasio/Polímeros, raíz-raíz')
+abline(reg.Rz.KP)
+
+reg.Rz.SWP <- lm(Rz.SWP ~ Rz.N)
+summary(reg.Rz.SWP)
+plot(Rz.N,Rz.SWP,pch=19,xlab = 'Velocidad de corte (RPM)', ylab = 'Esfuerzo de corte (lbf/100ft2)',main = 'Agua de mar/PAC, raíz-raíz')
+abline(reg.Rz.SWP)
